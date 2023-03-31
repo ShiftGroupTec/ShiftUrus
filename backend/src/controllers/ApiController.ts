@@ -18,7 +18,7 @@ import ListSettingsServiceOne from "../services/SettingServices/ListSettingsServ
 
 type WhatsappData = {
   whatsappId: number;
-}
+};
 
 type MessageData = {
   body: string;
@@ -64,11 +64,7 @@ const createContact = async (
     }
   }
 
-  const createTicket = await FindOrCreateTicketService(
-    contact,
-    whatsapp.id,
-    1
-  );
+  const createTicket = await FindOrCreateTicketService(contact, whatsapp.id, 1);
 
   const ticket = await ShowTicketService(createTicket.id);
 
@@ -104,17 +100,27 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
   if (medias) {
     await Promise.all(
       medias.map(async (media: Express.Multer.File) => {
-        resp = await SendWhatsAppMedia({ body, media, ticket: contactAndTicket });
+        resp = await SendWhatsAppMedia({
+          body,
+          media,
+          ticket: contactAndTicket
+        });
       })
     );
   } else {
-    resp = await SendWhatsAppMessage({ body, ticket: contactAndTicket, quotedMsg });
+    resp = await SendWhatsAppMessage({
+      body,
+      ticket: contactAndTicket,
+      quotedMsg
+    });
   }
 
-  const listSettingsService = await ListSettingsServiceOne({ key: "closeTicketApi" });
-  var closeTicketApi = listSettingsService?.value;
+  const listSettingsService = await ListSettingsServiceOne({
+    key: "closeTicketApi"
+  });
+  const closeTicketApi = listSettingsService?.value;
 
-  if (closeTicketApi === 'enabled') {
+  if (closeTicketApi === "enabled") {
     setTimeout(async () => {
       await UpdateTicketService({
         ticketId: contactAndTicket.id,
